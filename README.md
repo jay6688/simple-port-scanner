@@ -16,3 +16,11 @@ A fast, concurrent TCP port scanner built in Python. This tool leverages multi-t
 2. Run the script in your terminal:
    ```bash
    python port_scanner.py
+
+## ⚠️ Disclaimer
+This tool is for educational purposes and authorized auditing only. Never scan a target without explicit permission from the network owner. `scanme.nmap.org` is provided by the Nmap project specifically for testing scanners.
+
+## 🧠 What I Learned
+* **Concurrent Programming**: Managing thread pools and thread-safe data structures `(queue.Queue)` to handle asynchronous tasks.
+* **Network Reconnaissance**: Understanding how `socket.connect_ex()` interacts with TCP handshakes to determine port states.
+* **Service Identification**: Reading raw byte streams from open sockets to extract identifying software banners.
