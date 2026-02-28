@@ -1,36 +1,55 @@
 import socket
+import threading
+from queue import Queue
 
-# 1. Set our new practice target
+# 1. Target Setup
 target_domain = "scanme.nmap.org"
+target_ip = socket.gethostbyname(target_domain)
+print(f"[*] Scanning target: {target_ip}...")
 
-# 2. Computers need IP addresses, not domain names. This translates it for us!
-target_ip = socket.gethostbyname(target_domain) 
+# 2. Create the Queue (The stack of work)
+queue = Queue()
 
-print(f"Scanning target: {target_ip}...")
-
-# 3. Use range() to scan ports 1 through 100. (It stops just before 101)
-for port in range(1, 101):
+# 3. The Scanning Function (What each worker actually does)
+def scan_port(port):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-        # 4. Dropped the timeout to 0.5 seconds so the loop runs faster
         s.settimeout(0.5) 
-        
-        result = s.connect_ex((target_ip, port)) 
+        result = s.connect_ex((target_ip, port))
         
         if result == 0:
             print(f"[+] Port {port} is OPEN!")
             try:
-                # Tell the socket to receive up to 1024 bytes of data, decode it, and strip extra spaces
                 banner = s.recv(1024).decode().strip()
                 if banner:
                     print(f"    [>] Service Banner: {banner}")
-            except Exception as e:
-                # If the port doesn't send a banner, we just ignore it and move on
+            except:
                 pass
-            
         s.close()
-
-    except Exception as e:
+    except:
         pass
-    
+
+# 4. The Worker Function
+def worker():
+    # As long as there are ports left in the queue, keep grabbing them
+    while not queue.empty():
+        port = queue.get()
+        scan_port(port)
+        queue.task_done()
+
+# 5. Fill the Queue with ports 1 through 1024 (The common ports)
+for port in range(1, 1025):
+    queue.put(port)
+
+# 6. Spawn 100 Workers (Threads)
+thread_list = []
+for _ in range(100):
+    thread = threading.Thread(target=worker)
+    thread_list.append(thread)
+    thread.start()
+
+# 7. Wait for all workers to finish before exiting
+for thread in thread_list:
+    thread.join()
+
+print("[*] Scan complete!")
