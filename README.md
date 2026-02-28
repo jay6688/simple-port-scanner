@@ -1,13 +1,18 @@
-# simple-port-scanner
+# PyThreadedScanner 🔍
 
-Who: Created by you, as your first official project for the "Level 2: Applied Python & Security Tooling" roadmap.
+A fast, concurrent TCP port scanner built in Python. This tool leverages multi-threading and queues to rapidly scan target IP addresses for open ports and attempts basic banner grabbing to identify running services.
 
-What: A custom, automated TCP Port Scanner with banner-grabbing capabilities. It takes a target domain or IP address, scans a specified range of ports, and reports back which ones are open.
+## ✨ Features
+* **High-Speed Scanning**: Utilizes Python's `threading` and `queue` modules to spawn 100 concurrent worker threads, drastically reducing scan times compared to sequential scanners.
+* **Banner Grabbing**: Actively listens on open ports to capture and display service banners (e.g., SSH, HTTP server details) for immediate reconnaissance.
+* **Timeout Handling**: Uses `socket.settimeout()` to prevent the scanner from hanging on unresponsive ports or filtered connections.
 
-When: February 26, 2026.
+## ⚙️ Prerequisites
+* Python 3.x (Built using entirely standard libraries, no `pip install` required)
 
-Where: Built in VS Code. It is capable of scanning local networks (127.0.0.1) or external remote servers across the internet (like scanme.nmap.org).
+## 🚀 How to Run
 
-Why: To automate the initial reconnaissance (information gathering) phase of a security assessment. Instead of manually checking network doors, this script finds the open ports and extracts the "Service Banner" to reveal exactly what software and operating system the target is running.
-
-How: It uses Python's built-in socket library to establish IPv4 TCP connections (AF_INET, SOCK_STREAM). It loops through a given range of ports, uses connect_ex() to check for an open connection, and uses .recv(1024) to listen for and decode the server's welcome banner. The entire process is wrapped in try/except blocks so the script handles timeouts and closed ports gracefully without crashing.
+1. Open `port_scanner.py` and modify the `target_domain` variable to your authorized testing target (defaults to `scanme.nmap.org`).
+2. Run the script in your terminal:
+   ```bash
+   python port_scanner.py
